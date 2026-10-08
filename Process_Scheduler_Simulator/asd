@@ -1,0 +1,55 @@
+[1mdiff --git a/src/main/java/ProcessScheduler/CPU.java b/src/main/java/ProcessScheduler/CPU.java[m
+[1mindex 5bae2f8..22ca97e 100644[m
+[1m--- a/src/main/java/ProcessScheduler/CPU.java[m
+[1m+++ b/src/main/java/ProcessScheduler/CPU.java[m
+[36m@@ -1,7 +1,6 @@[m
+ package ProcessScheduler;[m
+ [m
+ import java.io.BufferedReader;[m
+[31m-import java.io.FileNotFoundException;[m
+ import java.io.IOException;[m
+ import java.io.InputStreamReader;[m
+ import java.util.stream.Collectors;[m
+[36m@@ -31,7 +30,7 @@[m [mpublic class CPU extends Thread {[m
+             System.out.println(PCB.getPID() +": " + PCB.getState());[m
+ [m
+             // Build the process to run the Python script[m
+[31m-            //note to self: change "python3" to Pythonpath before final commit!!!![m
+[32m+[m[32m            //note to self: change "python3" to Pythonpat[h before final commit!!!![m
+             String processPath = PCB.getProcessPath();[m
+             ProcessBuilder p = new ProcessBuilder("python3", processPath);[m
+             p.redirectErrorStream(true);[m
+[1mdiff --git a/src/main/java/ProcessScheduler/Dispatcher.java b/src/main/java/ProcessScheduler/Dispatcher.java[m
+[1mindex 0b51e3b..c3651c9 100644[m
+[1m--- a/src/main/java/ProcessScheduler/Dispatcher.java[m
+[1m+++ b/src/main/java/ProcessScheduler/Dispatcher.java[m
+[36m@@ -44,8 +44,27 @@[m [mpublic class Dispatcher implements Runnable {[m
+      */[m
+     @Override[m
+     public void run() {[m
+[31m-   [m
+[31m-        [m
+[32m+[m[32m        while (true) {[m
+[32m+[m[32m            synchronized (readyQueue) {[m
+[32m+[m[32m                if (readyQueue.isEmpty()) {[m
+[32m+[m
+[32m+[m[32m                    if (creator.isFinished()[m
+[32m+[m[32m                        || jobQueue.getQueue().isEmpty()) {[m
+[32m+[m[32m                        break;[m
+[32m+[m[32m                    } else {[m
+[32m+[m[32m                        try {[m
+[32m+[m[32m                            readyQueue.wait();[m
+[32m+[m[32m                        } catch (InterruptedException ex) {[m
+[32m+[m[32m                           ex.printStackTrace();[m
+[32m+[m[32m                        }[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m                if (!readyQueue.isEmpty()) {[m
+[32m+[m[32m                    scheduler.runAlgorithm();[m
+[32m+[m[32m                }[m[41m  [m
+[32m+[m[32m            }[m
+[32m+[m[41m            [m
+[32m+[m[32m        }[m
+         // TO DO[m
+     }[m
+ [m
